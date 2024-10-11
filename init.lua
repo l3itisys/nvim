@@ -1,4 +1,3 @@
-require("lolo.plugins-setup")
 require("lolo.core.options")
 require("lolo.core.keymaps")
 require("lolo.core.colorscheme")
