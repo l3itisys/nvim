@@ -1,31 +1,16 @@
-local setup, nvimtree = pcall(require, "nvim-tree")
-if not setup then
-  return 
-end
-
--- recommended settings from docs 
-vim.g.loaded = 1 
-vim.g.loaded_netrwPlugin = 1 
-
--- change color for arrows in tree to light blue
-vim.cmd([[ highlight NvimTreeIndentMarker guifg=#3FC5FF ]])
-
--- configure nvim-tree 
-nvimtree.setup({
-  -- change folder arrow icons
+-- Return the options table
+return {
+  -- Your configuration options here
   renderer = {
     icons = {
       glyphs = {
         folder = {
           arrow_closed = "", -- icon for folder closed
-          arrow_open = "", -- icon for folder open
+          arrow_open = "",   -- icon for folder open
         },
       },
     },
   },
-  -- disable window_picker for
-  -- explorer to work well with
-  -- window splits
   actions = {
     open_file = {
       window_picker = {
@@ -33,7 +18,5 @@ nvimtree.setup({
       },
     },
   },
-  -- 	git = {
-  -- 		ignore = false,
-  -- 	},
-}) 
+}
+

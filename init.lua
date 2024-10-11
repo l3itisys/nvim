@@ -1,17 +1,11 @@
+-- ~/.config/nvim/init.lua
+
+-- Load Lazy.nvim and your plugins
+require("lolo.config.lazy")
+
+-- Load your core configurations
 require("lolo.core.options")
 require("lolo.core.keymaps")
 require("lolo.core.colorscheme")
-require("lolo.plugins.comment")
-require("lolo.plugins.nvim-tree")
-require("lolo.plugins.lualine")
-require("lolo.plugins.telescope")
-require("lolo.plugins.nvim-cmp")
-require("lolo.plugins.lsp.mason")
-require("lolo.plugins.lsp.lspsaga")
-require("lolo.plugins.lsp.lspconfig")
-require("lolo.plugins.lsp.null-ls")
-require("lolo.plugins.autopairs")
-require("lolo.plugins.treesitter")
-require("lolo.plugins.gitsigns")
 require("lolo.core.utils")
-require("lolo.plugins.avante")
+
