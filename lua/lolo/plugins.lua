@@ -26,14 +26,13 @@ return {
   -- Commenting
   {
     "numToStr/Comment.nvim",
-    opts = {}, -- Use opts since no complex setup is needed
+    opts = {},
   },
 
   -- File explorer
   {
     "nvim-tree/nvim-tree.lua",
     init = function()
-      -- Settings that need to be set before the plugin loads
       vim.g.loaded = 1
       vim.g.loaded_netrwPlugin = 1
       vim.cmd([[ highlight NvimTreeIndentMarker guifg=#3FC5FF ]])
@@ -94,7 +93,18 @@ return {
     end,
   },
 
-  -- Avante.nvim
+  -- Gen.nvim
+  {
+    "David-Kunz/gen.nvim",
+    config = function()
+      require("gen").setup({
+        model = "stable-code:3b",
+        display_mode = "split",
+      })
+    end,
+  },
+
+  -- Avante
   {
     "yetone/avante.nvim",
     dependencies = {
@@ -103,11 +113,15 @@ return {
       "stevearc/dressing.nvim",
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
-      "zbirenbaum/copilot.lua",
     },
     build = "make",
     config = function()
-      require("lolo.plugins.avante")
+      require("avante").setup({
+        provider = "claude",
+        claude = {
+          model = "claude-3-sonnet-20240229",
+        },
+      })
     end,
   },
 
@@ -125,6 +139,33 @@ return {
     build = "make",
   },
 
-  -- Other plugins...
+  -- Official Aider plugin
+  {
+    "joshuavial/aider.nvim",
+    config = function()
+      require('aider').setup({
+        auto_manage_context = true,
+        default_bindings = false
+      })
+    end,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "stevearc/dressing.nvim",
+    },
+  },
+
+-- Indentation guides
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    config = function()
+      require("lolo.plugins.indent-blankline")
+    end,
+  },
+
+  -- Rainbow delimiters
+  {
+    "HiPhish/rainbow-delimiters.nvim",
+  },
 }
 

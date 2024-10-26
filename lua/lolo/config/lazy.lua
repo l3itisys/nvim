@@ -27,6 +27,11 @@ require("lazy").setup(require("lolo.plugins"), {
   -- Colorscheme that will be used when installing plugins.
   install = { colorscheme = { "nightfly" } },
   -- Automatically check for plugin updates
-  checker = { enabled = true },
+  checker = { enabled = true, notify = false },
+  performance = {
+        rtp = {
+            disabled_plugins = { "matchparen", "netrwPlugin" },
+        },
+    },
 })
 
