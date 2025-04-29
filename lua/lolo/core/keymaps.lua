@@ -1,7 +1,8 @@
--- set leader key to space
+-- ~/.config/nvim/lua/lolo/core/keymaps.lua
+
 vim.g.mapleader = " "
 
-local keymap = vim.keymap -- for conciseness
+local keymap = vim.keymap
 
 ---------------------
 -- General Keymaps
@@ -20,15 +21,15 @@ keymap.set("n", "<leader>+", "<C-a>") -- increment
 keymap.set("n", "<leader>-", "<C-x>") -- decrement
 
 -- window management
-keymap.set("n", "<leader>sv", "<C-w>v") -- split window vertically
-keymap.set("n", "<leader>sh", "<C-w>s") -- split window horizontally
-keymap.set("n", "<leader>se", "<C-w>=") -- make split windows equal width & height
-keymap.set("n", "<leader>sx", ":close<CR>") -- close current split window
+keymap.set("n", "<leader>sv", "<C-w>v")
+keymap.set("n", "<leader>sh", "<C-w>s")
+keymap.set("n", "<leader>se", "<C-w>=")
+keymap.set("n", "<leader>sx", ":close<CR>")
 
-keymap.set("n", "<leader>to", ":tabnew<CR>") -- open new tab
-keymap.set("n", "<leader>tx", ":tabclose<CR>") -- close current tab
-keymap.set("n", "<leader>tn", ":tabn<CR>") --  go to next tab
-keymap.set("n", "<leader>tp", ":tabp<CR>") --  go to previous tab
+keymap.set("n", "<leader>to", ":tabnew<CR>")
+keymap.set("n", "<leader>tx", ":tabclose<CR>")
+keymap.set("n", "<leader>tn", ":tabn<CR>")
+keymap.set("n", "<leader>tp", ":tabp<CR>")
 
 ----------------------
 -- Plugin Keybinds
@@ -55,10 +56,22 @@ keymap.set("n", "<leader>gs", "<cmd>Telescope git_status<cr>")
 -- restart lsp server
 keymap.set("n", "<leader>rs", ":LspRestart<CR>")
 
--- Aider keymaps
-keymap.set('n', '<leader>aa', '<cmd>lua AiderOpen()<CR>', { noremap = true, silent = true, desc = "Open Aider" })
-keymap.set('n', '<leader>ab', '<cmd>lua AiderBackground()<CR>', { noremap = true, silent = true, desc = "Aider Background" })
-keymap.set('n', '<leader>a3', '<cmd>lua AiderOpen("-3")<CR>', { noremap = true, silent = true, desc = "Open Aider GPT-3.5" })
+-- Aider keymaps (if you want them here instead of which-key):
+-- to open Aider default
+keymap.set('n', '<leader>aa', function()
+  require("aider").AiderOpen()
+end, { noremap = true, silent = true, desc = "Open Aider default" })
+
+-- to open Aider with custom args (example)
+keymap.set('n', '<leader>ab', function()
+  -- If you have some real param for "background" or remove this
+  require("aider").AiderOpen("--background")
+end, { noremap = true, silent = true, desc = "Aider Background" })
+
+keymap.set('n', '<leader>a3', function()
+  require("aider").AiderOpen("-3")
+end, { noremap = true, silent = true, desc = "Open Aider GPT-3.5" })
 
 -- Toggle indent guides
 keymap.set("n", "<leader>ti", ":IndentToggle<CR>", { noremap = true, silent = true, desc = "Toggle indent guides" })
+

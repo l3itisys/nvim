@@ -1,4 +1,5 @@
 -- ~/.config/nvim/lua/lolo/plugins/ai-tools.lua
+
 local M = {}
 
 -- Helper functions for AI commands
@@ -24,7 +25,7 @@ local function improve_code()
 end
 
 function M.setup()
-  -- Local LLM Configuration (Ollama)
+  -- Local LLM Configuration (Ollama + gen.nvim)
   require("gen").setup({
     model = "stable-code:3b",
     display_mode = "split",
@@ -42,15 +43,15 @@ function M.setup()
     prompts = {
       ["Quick"] = {
         provider = "stable-code:3b",
-        prompt = "Explain this code snippet concisely and technically, focusing on its purpose and key operations:\n```$filetype\n$text\n```\nProvide a clear, technical explanation in 2-3 sentences.",
+        prompt = "Explain this code snippet concisely and technically, focusing on its purpose...\n```$filetype\n$text\n```",
       },
       ["Doc"] = {
         provider = "stable-code:3b",
-        prompt = "Add professional documentation for this code:\n```$filetype\n$text\n```",
+        prompt = "Add professional documentation for this code...\n```$filetype\n$text\n```",
       },
       ["Improve"] = {
         provider = "stable-code:3b",
-        prompt = "Suggest improvements for this code focusing on performance and best practices:\n```$filetype\n$text\n```",
+        prompt = "Suggest improvements for this code focusing on performance...\n```$filetype\n$text\n```",
       },
     },
     window = {
@@ -72,9 +73,29 @@ function M.setup()
       },
       a = {
         name = "Aider",
-        a = { "<cmd>lua AiderOpen()<CR>", "Open Aider" },
-        b = { "<cmd>lua AiderBackground()<CR>", "Aider Background" },
-        ["3"] = { "<cmd>lua AiderOpen('-3')<CR>", "Open Aider GPT-3.5" },
+        -- Use AiderOpen (Lua function) from the aider.nvim plugin
+        a = {
+          function()
+            -- No args means default `aider` CLI
+            require("aider").AiderOpen()
+          end,
+          "Open Aider (Default)"
+        },
+        b = {
+          function()
+            -- Possibly pass some custom args if you have them,
+            -- else remove this if plugin doesn't define "background"
+            require("aider").AiderOpen("--background")
+          end,
+          "Aider Background"
+        },
+        ["3"] = {
+          function()
+            -- Example passing -3 if you want GPT-3.5
+            require("aider").AiderOpen("-3")
+          end,
+          "Open Aider GPT-3.5"
+        },
       },
       t = {
         name = "Toggle",
@@ -91,3 +112,4 @@ function M.setup()
 end
 
 return M
+
