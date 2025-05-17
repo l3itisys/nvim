@@ -78,6 +78,15 @@ return {
     end,
   },
 
+  {
+    "saghen/blink.cmp",
+    dependencies = { "rafamadriz/friendly-snippets" },
+    version = "1.*",
+    config = function()
+      require("lolo.plugins.blink-cmp")
+    end,
+  },
+
   -- LSP and Mason setup
   {
     "williamboman/mason.nvim",
