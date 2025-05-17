@@ -67,15 +67,64 @@ return {
     end,
   },
 
-  -- LSP and Mason
+  -- diagnostic
+  {
+    "rachartier/tiny-inline-diagnostic.nvim",
+    event = "LspAttach", -- Or `LspAttach`
+    priority = 1000, -- needs to be loaded in first
+    config = function()
+      require("lolo.plugins.tiny-inline-diagnostic")
+      vim.diagnostic.config({ virtual_text = false })
+    end,
+  },
+
+  -- LSP and Mason setup
   {
     "williamboman/mason.nvim",
     config = function()
       require("mason").setup()
     end,
   },
-  "williamboman/mason-lspconfig.nvim",
-  "neovim/nvim-lspconfig",
+  {
+    "williamboman/mason-lspconfig.nvim",
+    config = function()
+      require("mason-lspconfig").setup({
+        -- list of servers for mason to install
+        ensure_installed = {
+          "ts_ls",
+          "html",
+          "cssls",
+          "tailwindcss",
+          "lua_ls",
+          "emmet_ls",
+          "pyright", -- Add Python support
+        },
+        automatic_installation = true, -- Add this line
+      })
+    end,
+  },
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      require("lolo.plugins.lsp.lspconfig")
+    end,
+  },
+
+  -- For code formatting
+  {
+    "stevearc/conform.nvim",
+    config = function()
+      require("lolo.plugins.lsp.conform")
+    end,
+  },
+
+  -- For linting
+  {
+    "mfussenegger/nvim-lint",
+    config = function()
+      require("lolo.plugins.lsp.lint")
+    end,
+  },
 
   -- Autopairs
   {
@@ -143,9 +192,9 @@ return {
   {
     "joshuavial/aider.nvim",
     config = function()
-      require('aider').setup({
+      require("aider").setup({
         auto_manage_context = true,
-        default_bindings = false
+        default_bindings = false,
       })
     end,
     dependencies = {
@@ -154,7 +203,7 @@ return {
     },
   },
 
--- Indentation guides
+  -- Indentation guides
   {
     "lukas-reineke/indent-blankline.nvim",
     main = "ibl",
@@ -168,4 +217,3 @@ return {
     "HiPhish/rainbow-delimiters.nvim",
   },
 }
-
