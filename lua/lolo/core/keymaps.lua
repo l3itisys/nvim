@@ -31,6 +31,11 @@ keymap.set("n", "<leader>tx", ":tabclose<CR>")
 keymap.set("n", "<leader>tn", ":tabn<CR>")
 keymap.set("n", "<leader>tp", ":tabp<CR>")
 
+-- Lazygit keymaps
+keymap.set("n", "<leader>lg", ":LazyGit<CR>", { desc = "Open LazyGit" })
+keymap.set("n", "<leader>lf", ":LazyGitCurrentFile<CR>", { desc = "LazyGit current file" })
+keymap.set("n", "<leader>lc", ":LazyGitConfig<CR>", { desc = "LazyGit config" })
+
 ----------------------
 -- Plugin Keybinds
 --------------------
@@ -58,20 +63,19 @@ keymap.set("n", "<leader>rs", ":LspRestart<CR>")
 
 -- Aider keymaps (if you want them here instead of which-key):
 -- to open Aider default
-keymap.set('n', '<leader>aa', function()
+keymap.set("n", "<leader>aa", function()
   require("aider").AiderOpen()
 end, { noremap = true, silent = true, desc = "Open Aider default" })
 
 -- to open Aider with custom args (example)
-keymap.set('n', '<leader>ab', function()
+keymap.set("n", "<leader>ab", function()
   -- If you have some real param for "background" or remove this
   require("aider").AiderOpen("--background")
 end, { noremap = true, silent = true, desc = "Aider Background" })
 
-keymap.set('n', '<leader>a3', function()
+keymap.set("n", "<leader>a3", function()
   require("aider").AiderOpen("-3")
 end, { noremap = true, silent = true, desc = "Open Aider GPT-3.5" })
 
 -- Toggle indent guides
 keymap.set("n", "<leader>ti", ":IndentToggle<CR>", { noremap = true, silent = true, desc = "Toggle indent guides" })
-

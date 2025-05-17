@@ -20,6 +20,6 @@ vim.g.loaded_ruby_provider = 0
 function _G.ReloadBuffer()
   local temp_sync_value = vim.g.aider_buffer_sync
   vim.g.aider_buffer_sync = 0
-  vim.api.nvim_exec2('e!', {output = false})
+  vim.api.nvim_exec2("e!", { output = false })
   vim.g.aider_buffer_sync = temp_sync_value
 end
