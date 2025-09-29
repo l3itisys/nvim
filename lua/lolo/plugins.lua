@@ -119,6 +119,7 @@ return {
       require("mason").setup()
     end,
   },
+
   {
     "williamboman/mason-lspconfig.nvim",
     config = function()
@@ -131,12 +132,16 @@ return {
           "tailwindcss",
           "lua_ls",
           "emmet_ls",
-          "pyright", -- Add Python support
+          "pyright", -- Python support
+          "clangd", -- C/C++ support
+          "rust_analyzer", -- Rust support (optional)
+          "gopls", -- Go support (optional)
         },
-        automatic_installation = true, -- Add this line
+        automatic_installation = true,
       })
     end,
   },
+
   {
     "neovim/nvim-lspconfig",
     config = function()

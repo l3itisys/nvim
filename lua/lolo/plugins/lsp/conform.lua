@@ -17,6 +17,13 @@ conform.setup({
     json = { "prettier" },
     yaml = { "prettier" },
     markdown = { "prettier" },
+    -- Add C/C++ formatting
+    c = { "clang_format" },
+    cpp = { "clang_format" },
+    -- Optional: Add other languages
+    rust = { "rustfmt" },
+    go = { "gofmt" },
+    python = { "black", "isort" },
   },
 
   -- Set up format-on-save

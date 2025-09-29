@@ -1,16 +1,11 @@
 -- ~/.config/nvim/lua/lolo/plugins/lsp/lspconfig.lua
 -- Replace this file with the following content
 
+-- ~/.config/nvim/lua/lolo/plugins/lsp/lspconfig.lua
 local lspconfig_status, lspconfig = pcall(require, "lspconfig")
 if not lspconfig_status then
   return
 end
-
--- import cmp-nvim-lsp plugin safely
--- local cmp_nvim_lsp_status, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
--- if not cmp_nvim_lsp_status then
---   return
--- end
 
 local keymap = vim.keymap -- for conciseness
 
@@ -40,7 +35,6 @@ local on_attach = function(client, bufnr)
 end
 
 -- used to enable autocompletion (assign to every lsp server config)
---local capabilities = cmp_nvim_lsp.default_capabilities()
 local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 -- Change the Diagnostic symbols in the sign column (gutter)
@@ -94,6 +88,48 @@ local servers = {
             functionReturnTypes = true,
           },
         },
+      },
+    },
+  },
+  -- C/C++ Language Server
+  clangd = {
+    cmd = { "clangd", "--background-index" },
+    filetypes = { "c", "cpp", "objc", "objcpp" },
+    root_dir = function()
+      return vim.fs.dirname(vim.fs.find({ "compile_commands.json", ".git" }, { upward = true })[1])
+    end,
+    settings = {
+      clangd = {
+        arguments = {
+          "--header-insertion=iwyu",
+          "--completion-style=detailed",
+          "--function-arg-placeholders",
+          "--fallback-style=llvm",
+        },
+      },
+    },
+  },
+  -- Rust Language Server (optional)
+  rust_analyzer = {
+    settings = {
+      ["rust-analyzer"] = {
+        cargo = {
+          allFeatures = true,
+        },
+        diagnostics = {
+          enable = true,
+        },
+      },
+    },
+  },
+  -- Go Language Server (optional)
+  gopls = {
+    settings = {
+      gopls = {
+        analyses = {
+          unusedparams = true,
+        },
+        staticcheck = true,
       },
     },
   },
