@@ -79,3 +79,20 @@ end, { noremap = true, silent = true, desc = "Open Aider GPT-3.5" })
 
 -- Toggle indent guides
 keymap.set("n", "<leader>ti", ":IndentToggle<CR>", { noremap = true, silent = true, desc = "Toggle indent guides" })
+
+----------------------
+-- Maven / SSV Test Commands
+--------------------
+-- Terminal
+keymap.set("n", "<leader>tt", ":split | terminal<CR>", { desc = "Open terminal" })
+keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+-- Maven shortcuts
+keymap.set("n", "<leader>mt", ":split | terminal mvn test<CR>", { desc = "Maven: Run tests" })
+keymap.set("n", "<leader>mc", ":split | terminal mvn clean test<CR>", { desc = "Maven: Clean & test" })
+keymap.set("n", "<leader>mT", function()
+  local test = vim.fn.input("Test class: ")
+  if test ~= "" then
+    vim.cmd("split | terminal mvn test -Dtest=" .. test)
+  end
+end, { desc = "Maven: Run specific test" })

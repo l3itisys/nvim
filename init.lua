@@ -1,7 +1,7 @@
 -- ~/.config/nvim/init.lua
 
 -- Load Lazy.nvim and your plugins
-require("lolo.config.lazy")
+--require("lolo.config.lazy")
 
 -- Load your core configurations
 require("lolo.core.options")
@@ -10,7 +10,7 @@ require("lolo.core.colorscheme")
 require("lolo.core.utils")
 
 -- Load AI tools configuration
-require("lolo.plugins.ai-tools").setup()
+--require("lolo.plugins.ai-tools").setup()
 
 -- Disable unused providers
 vim.g.loaded_perl_provider = 0

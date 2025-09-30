@@ -120,6 +120,12 @@ return {
     end,
   },
 
+  -- Better Java support
+  {
+    "mfussenegger/nvim-jdtls",
+    ft = "java",
+  },
+
   {
     "williamboman/mason-lspconfig.nvim",
     config = function()
@@ -136,6 +142,7 @@ return {
           "clangd", -- C/C++ support
           "rust_analyzer", -- Rust support (optional)
           "gopls", -- Go support (optional)
+          "jdtls",
         },
         automatic_installation = true,
       })
@@ -181,37 +188,37 @@ return {
     end,
   },
 
-  -- Gen.nvim
-  {
-    "David-Kunz/gen.nvim",
-    config = function()
-      require("gen").setup({
-        model = "stable-code:3b",
-        display_mode = "split",
-      })
-    end,
-  },
+  -- -- Gen.nvim
+  -- {
+  --   "David-Kunz/gen.nvim",
+  --   config = function()
+  --     require("gen").setup({
+  --       model = "stable-code:3b",
+  --       display_mode = "split",
+  --     })
+  --   end,
+  -- },
 
-  -- Avante
-  {
-    "yetone/avante.nvim",
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
-    build = "make",
-    config = function()
-      require("avante").setup({
-        provider = "claude",
-        claude = {
-          model = "claude-3-sonnet-20240229",
-        },
-      })
-    end,
-  },
+  -- -- Avante
+  -- {
+  --   "yetone/avante.nvim",
+  --   dependencies = {
+  --     "MunifTanjim/nui.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --     "stevearc/dressing.nvim",
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-tree/nvim-web-devicons",
+  --   },
+  --   build = "make",
+  --   config = function()
+  --     require("avante").setup({
+  --       provider = "claude",
+  --       claude = {
+  --         model = "claude-3-sonnet-20240229",
+  --       },
+  --     })
+  --   end,
+  -- },
 
   -- Telescope
   {
@@ -227,20 +234,20 @@ return {
     build = "make",
   },
 
-  -- Official Aider plugin
-  {
-    "joshuavial/aider.nvim",
-    config = function()
-      require("aider").setup({
-        auto_manage_context = true,
-        default_bindings = false,
-      })
-    end,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "stevearc/dressing.nvim",
-    },
-  },
+  -- -- Official Aider plugin
+  -- {
+  --   "joshuavial/aider.nvim",
+  --   config = function()
+  --     require("aider").setup({
+  --       auto_manage_context = true,
+  --       default_bindings = false,
+  --     })
+  --   end,
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "stevearc/dressing.nvim",
+  --   },
+  -- },
 
   -- Indentation guides
   {
