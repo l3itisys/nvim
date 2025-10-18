@@ -13,6 +13,35 @@ return {
     end,
   },
 
+  -- Treesitter (syntax highlighting, indenting, etc.)
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+          "lua",
+          "ruby",
+          "html",
+          "css",
+          "scss",
+          "javascript",
+          "typescript",
+          "tsx",
+          "json",
+          "yaml",
+          "markdown",
+          "bash",
+          "vim",
+          "vimdoc",
+          "query",
+        },
+        highlight = { enable = true, additional_vim_regex_highlighting = false },
+        indent = { enable = true },
+      })
+    end,
+  },
+
   -- Tmux & split window navigation
   "christoomey/vim-tmux-navigator",
 
@@ -207,7 +236,7 @@ return {
       require("avante").setup({
         provider = "claude",
         claude = {
-          model = "claude-3-sonnet-20240229",
+          model = "claude-3-5-sonnet-latest",
         },
       })
     end,

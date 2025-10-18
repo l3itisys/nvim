@@ -4,24 +4,24 @@ local M = {}
 
 -- Helper functions for AI commands
 local function quick_help()
-  vim.cmd('botright split')
-  vim.cmd('resize 15')
-  vim.cmd('Gen Quick')
-  vim.cmd('wincmd k')
+  vim.cmd("botright split")
+  vim.cmd("resize 15")
+  vim.cmd("Gen Quick")
+  vim.cmd("wincmd k")
 end
 
 local function add_doc()
-  vim.cmd('botright split')
-  vim.cmd('resize 15')
-  vim.cmd('Gen Doc')
-  vim.cmd('wincmd k')
+  vim.cmd("botright split")
+  vim.cmd("resize 15")
+  vim.cmd("Gen Doc")
+  vim.cmd("wincmd k")
 end
 
 local function improve_code()
-  vim.cmd('botright split')
-  vim.cmd('resize 15')
-  vim.cmd('Gen Improve')
-  vim.cmd('wincmd k')
+  vim.cmd("botright split")
+  vim.cmd("resize 15")
+  vim.cmd("Gen Improve")
+  vim.cmd("wincmd k")
 end
 
 function M.setup()
@@ -33,8 +33,8 @@ function M.setup()
     show_model = true,
     no_auto_close = true,
     init = function()
-      vim.cmd('wincmd J')
-      vim.cmd('resize 15')
+      vim.cmd("wincmd J")
+      vim.cmd("resize 15")
       vim.wo.wrap = true
       vim.wo.number = false
       vim.wo.relativenumber = false
@@ -79,7 +79,7 @@ function M.setup()
             -- No args means default `aider` CLI
             require("aider").AiderOpen()
           end,
-          "Open Aider (Default)"
+          "Open Aider (Default)",
         },
         b = {
           function()
@@ -87,14 +87,14 @@ function M.setup()
             -- else remove this if plugin doesn't define "background"
             require("aider").AiderOpen("--background")
           end,
-          "Aider Background"
+          "Aider Background",
         },
         ["3"] = {
           function()
             -- Example passing -3 if you want GPT-3.5
             require("aider").AiderOpen("-3")
           end,
-          "Open Aider GPT-3.5"
+          "Open Aider GPT-3.5",
         },
       },
       t = {
@@ -112,4 +112,3 @@ function M.setup()
 end
 
 return M
-

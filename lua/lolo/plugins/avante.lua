@@ -1,34 +1,32 @@
--- Ensure avante is loaded
-local status, avante = pcall(require, "avante")
-if not status then
+-- ~/.config/nvim/lua/lolo/plugins/avante.lua
+
+local ok, avante = pcall(require, "avante")
+if not ok then
   return
 end
 
--- Load Avante library
-require("avante_lib").load()
+-- Optional helper; keep if you were using it before
+pcall(function()
+  require("avante_lib").load()
+end)
 
 avante.setup({
-  -- ================ CHOOSE ONE ================
-  provider = "openai",  -- Switch to "openai" if you want to use Ollama or "claude"
-  -- ============================================
+  -- Which provider Avante should use by default
+  provider = "openai", -- "openai" (your Ollama endpoint) or "claude"
 
-  auto_suggestions_provider = "openai", -- or "openai" if using openai provider or "claude"
+  -- Which provider powers inline suggestions
+  auto_suggestions_provider = "openai",
 
-  -- Claude config (Anthropic)
-  claude = {
-    endpoint = "https://api.anthropic.com",
-    model = "claude-3-5-sonnet-20240620",
-    temperature = 0,
-    max_tokens = 4096,
-  },
-
-  -- OpenAI config (Local Ollama w/ DeepSeek)
-  openai = {
-    endpoint = "http://localhost:11434/v1",  -- the local openai-like server
-    model = "deepseek-r1:7b-qwen-distill-q4_K_M",
-    api_key = "ollama",  -- just a placeholder, Ollama ignores it
-    temperature = 0,
-    max_tokens = 1024,
+  -- NEW: provider-specific configs go under `providers`
+  providers = {
+    -- OpenAI-compatible (your local Ollama + DeepSeek model)
+    openai = {
+      endpoint = "http://localhost:11434/v1",
+      model = "deepseek-r1:7b-qwen-distill-q4_K_M",
+      api_key = "ollama", -- placeholder; Ollama ignores it
+      temperature = 0,
+      max_tokens = 1024,
+    },
   },
 
   behaviour = {
@@ -39,4 +37,3 @@ avante.setup({
     support_paste_from_clipboard = false,
   },
 })
-
