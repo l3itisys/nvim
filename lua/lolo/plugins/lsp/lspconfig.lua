@@ -1,9 +1,11 @@
 -- ~/.config/nvim/lua/lolo/plugins/lsp/lspconfig.lua
 local lspconfig_status, lspconfig = pcall(require, "lspconfig")
+local util = require("lspconfig.util")
 if not lspconfig_status then
   return
 end
 
+local util = require("lspconfig.util")
 local keymap = vim.keymap -- for conciseness
 
 -- enable keybinds only for when lsp server available
@@ -32,7 +34,17 @@ local on_attach = function(client, bufnr)
 end
 
 -- used to enable autocompletion (assign to every lsp server config)
-local capabilities = require("blink.cmp").get_lsp_capabilities()
+local capabilities = (function()
+  local ok_blink, blink = pcall(require, "blink.cmp")
+  if ok_blink and blink.get_lsp_capabilities then
+    return blink.get_lsp_capabilities()
+  end
+  local ok_cmp, cmp = pcall(require, "cmp_nvim_lsp")
+  if ok_cmp and cmp.default_capabilities then
+    return cmp.default_capabilities()
+  end
+  return vim.lsp.protocol.make_client_capabilities()
+end)()
 
 -- Change the Diagnostic symbols in the sign column (gutter)
 local signs = { Error = " ", Warn = " ", Hint = "ﴞ ", Info = " " }
@@ -75,9 +87,8 @@ local servers = {
   lua_ls = {
     single_file_support = true,
     root_dir = function(fname)
-      local u = require("lspconfig.util")
       -- Try common Lua roots; fall back to your Neovim config directory
-      return u.root_pattern(".luarc.json", ".luarc.jsonc", ".stylua.toml", "stylua.toml", ".git")(fname)
+      return util.root_pattern(".luarc.json", ".luarc.jsonc", ".stylua.toml", "stylua.toml", ".git")(fname)
         or vim.fn.stdpath("config")
     end,
     settings = {
@@ -147,29 +158,31 @@ local servers = {
     },
   },
 
-  -- Ruby (Rails) — prefer bundle exec if Gemfile exists, else mason/global binary
-  ruby_lsp = (function()
-    local use_bundle = (vim.fn.executable("bundle") == 1) and (vim.fs.find("Gemfile", { upward = true })[1] ~= nil)
-    local cmd
-    if use_bundle then
-      cmd = { "bundle", "exec", "ruby-lsp" }
-    elseif vim.fn.executable("ruby-lsp") == 1 then
-      cmd = { "ruby-lsp" }
-    else
-      cmd = { "ruby-lsp" } -- will still error if not installed; see notes below
-    end
-    return {
-      cmd = cmd,
-      init_options = {
-        formatter = "auto", -- uses standard/rubocop if present
-        linters = { "auto" },
-      },
-      filetypes = { "ruby" },
-      root_dir = function(fname)
-        return vim.fs.root(fname, { "Gemfile", ".git" }) or vim.loop.cwd()
-      end,
-    }
-  end)(),
+  -- Ruby (Rails) — prefer Bundler if Gemfile exists
+  ruby_lsp = {
+    cmd = { "ruby-lsp" }, -- default; may be overwritten by on_new_config
+    on_new_config = function(new_config, root_dir)
+      if vim.fn.executable("bundle") == 1 and vim.fn.filereadable(root_dir .. "/Gemfile") == 1 then
+        new_config.cmd = { "bundle", "exec", "ruby-lsp" }
+      else
+        -- try Mason’s installed binary if present, else PATH
+        local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/ruby-lsp"
+        if vim.fn.executable(mason_bin) == 1 then
+          new_config.cmd = { mason_bin }
+        else
+          new_config.cmd = { "ruby-lsp" }
+        end
+      end
+    end,
+    init_options = {
+      formatter = "auto", -- uses standard/rubocop if present
+      linters = { "auto" },
+    },
+    filetypes = { "ruby" },
+    root_dir = function(fname)
+      return util.root_pattern("Gemfile", ".git")(fname) or util.find_git_ancestor(fname) or vim.loop.cwd()
+    end,
+  },
 }
 
 -- ================================
@@ -177,34 +190,91 @@ local servers = {
 -- ================================
 local has_newapi = vim.lsp and vim.lsp.config and vim.lsp.enable
 if has_newapi then
-  local to_enable = {}
+  -- Register all servers
   for name, conf in pairs(servers) do
     conf.capabilities = capabilities
     conf.on_attach = on_attach
-    vim.lsp.config(name, conf) -- register
-    table.insert(to_enable, name)
+    vim.lsp.config(name, conf)
   end
-  vim.lsp.enable(to_enable) -- start them
+
+  -- Enable Mason-installed servers first (if Mason is present)
+  local enabled = {}
+  local mason_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
+  if mason_ok then
+    for _, name in ipairs(mason_lspconfig.get_installed_servers()) do
+      table.insert(enabled, name)
+    end
+  end
+
+  -- Also enable any servers you defined that Mason didn't install (e.g. ruby_lsp via Bundler)
+  local seen = {}
+  for _, n in ipairs(enabled) do
+    seen[n] = true
+  end
+  for name, _ in pairs(servers) do
+    if not seen[name] then
+      table.insert(enabled, name)
+    end
+  end
+
+  vim.lsp.enable(enabled)
 else
-  -- ===== Your original (legacy) setup using lspconfig =====
-  local mason_lspconfig_status, mason_lspconfig = pcall(require, "mason-lspconfig")
-  if mason_lspconfig_status then
-    local available_servers = mason_lspconfig.get_installed_servers()
-    for _, server_name in ipairs(available_servers) do
-      local server_config = servers[server_name] or {}
-      server_config.capabilities = capabilities
-      server_config.on_attach = on_attach
-      if lspconfig[server_name] then
-        lspconfig[server_name].setup(server_config)
+  -- ===== Legacy path using lspconfig (Neovim < 0.11) =====
+  local installed = {}
+  local mason_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
+  if mason_ok then
+    for _, name in ipairs(mason_lspconfig.get_installed_servers()) do
+      installed[name] = true
+      local cfg = servers[name] or {}
+      cfg.capabilities = capabilities
+      cfg.on_attach = on_attach
+      if lspconfig[name] then
+        lspconfig[name].setup(cfg)
       end
     end
-  else
-    for server_name, server_config in pairs(servers) do
-      server_config.capabilities = capabilities
-      server_config.on_attach = on_attach
-      if lspconfig[server_name] then
-        lspconfig[server_name].setup(server_config)
-      end
+  end
+  -- Also setup any servers not installed via Mason (e.g. ruby_lsp from Bundler)
+  for name, cfg in pairs(servers) do
+    if not installed[name] and lspconfig[name] then
+      cfg.capabilities = capabilities
+      cfg.on_attach = on_attach
+      lspconfig[name].setup(cfg)
     end
   end
 end
+
+-- =========================================================
+-- Extra: forcibly start ruby-lsp on Ruby buffers if needed
+-- (no-op if already attached; avoids Mason API calls)
+-- =========================================================
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "ruby" },
+  callback = function(args)
+    if #vim.lsp.get_clients({ name = "ruby_lsp", bufnr = args.buf }) > 0 then
+      return
+    end
+
+    local fname = vim.api.nvim_buf_get_name(args.buf)
+    local root = util.root_pattern("Gemfile", ".git")(fname) or util.find_git_ancestor(fname) or vim.loop.cwd()
+
+    local cmd
+    if vim.fn.executable("bundle") == 1 and vim.fn.filereadable(root .. "/Gemfile") == 1 then
+      cmd = { "bundle", "exec", "ruby-lsp" }
+    else
+      local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/ruby-lsp"
+      if vim.fn.executable(mason_bin) == 1 then
+        cmd = { mason_bin }
+      else
+        cmd = { "ruby-lsp" }
+      end
+    end
+
+    vim.lsp.start({
+      name = "ruby_lsp",
+      cmd = cmd,
+      root_dir = root,
+      capabilities = capabilities,
+      on_attach = on_attach,
+    })
+  end,
+})

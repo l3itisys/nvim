@@ -35,6 +35,7 @@ return {
           "vim",
           "vimdoc",
           "query",
+          "embedded_template",
         },
         highlight = { enable = true, additional_vim_regex_highlighting = false },
         indent = { enable = true },

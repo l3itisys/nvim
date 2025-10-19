@@ -1,5 +1,4 @@
 -- ~/.config/nvim/lua/lolo/plugins/lsp/conform.lua
-
 local status, conform = pcall(require, "conform")
 if not status then
   return
@@ -17,45 +16,41 @@ conform.setup({
     json = { "prettier" },
     yaml = { "prettier" },
     markdown = { "prettier" },
-    -- Add C/C++ formatting
     c = { "clang_format" },
     cpp = { "clang_format" },
-    -- Optional: Add other languages
     rust = { "rustfmt" },
     go = { "gofmt" },
     python = { "black", "isort" },
+    ruby = { "rubocop", "standardrb" },
+    eruby = { "erb_format" }, -- << use our custom formatter below
   },
 
-  -- Set up format-on-save
   format_on_save = function(bufnr)
-    -- Skip formatting for certain file types
-    local file_type = vim.bo[bufnr].filetype
     local file_name = vim.fn.expand("%:t")
-
-    -- Skip formatting for .condarc and other config files
     if file_name == ".condarc" or file_name:match("^%.") then
       return
     end
-
-    return {
-      timeout_ms = 500,
-      lsp_fallback = true,
-    }
+    return { timeout_ms = 500, lsp_fallback = true }
   end,
 
-  -- Customize formatters
   formatters = {
     stylua = {
       prepend_args = { "--indent-type", "Spaces", "--indent-width", "2" },
     },
+
+    -- Run the gem via Bundler so it’s always found in the project
+    erb_format = {
+      command = "bundle",
+      args = { "exec", "erb-format", "--stdin" },
+      stdin = true,
+      cwd = function(ctx)
+        local util = require("lspconfig.util")
+        return util.root_pattern("Gemfile", ".git")(ctx.filename) or vim.loop.cwd()
+      end,
+    },
   },
 })
 
--- Add format keymap
 vim.keymap.set({ "n", "v" }, "<leader>mp", function()
-  conform.format({
-    lsp_fallback = true,
-    async = false,
-    timeout_ms = 500,
-  })
+  conform.format({ lsp_fallback = true, async = false, timeout_ms = 500 })
 end, { desc = "Format file or range (in visual mode)" })

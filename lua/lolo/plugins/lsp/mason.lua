@@ -22,6 +22,7 @@ mason_lspconfig.setup({
     "rust_analyzer",
     "gopls",
     "jdtls",
+    "ruby_lsp",
   },
   automatic_installation = true,
 })
