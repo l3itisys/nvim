@@ -226,7 +226,6 @@ return {
     end,
   },
 
-  -- Avante
   {
     "yetone/avante.nvim",
     dependencies = {
@@ -240,13 +239,14 @@ return {
     config = function()
       require("avante").setup({
         provider = "claude",
-        claude = {
-          model = "claude-3-5-sonnet-latest",
+        providers = {
+          claude = {
+            model = "claude-3-5-sonnet-latest",
+          },
         },
       })
     end,
   },
-
   -- Telescope
   {
     "nvim-telescope/telescope.nvim",
