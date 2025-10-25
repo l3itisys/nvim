@@ -175,7 +175,7 @@ local servers = {
       end
     end,
     init_options = {
-      formatter = "auto", -- uses standard/rubocop if present
+      formatter = "none", -- uses standard/rubocop if present
       linters = { "auto" },
     },
     filetypes = { "ruby" },
@@ -202,7 +202,9 @@ if has_newapi then
   local mason_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
   if mason_ok then
     for _, name in ipairs(mason_lspconfig.get_installed_servers()) do
-      table.insert(enabled, name)
+      if name ~= "stylua" then
+        table.insert(enabled, name)
+      end
     end
   end
 
@@ -212,7 +214,7 @@ if has_newapi then
     seen[n] = true
   end
   for name, _ in pairs(servers) do
-    if not seen[name] then
+    if not seen[name] and name ~= "stylua" then
       table.insert(enabled, name)
     end
   end
@@ -224,25 +226,26 @@ else
   local mason_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
   if mason_ok then
     for _, name in ipairs(mason_lspconfig.get_installed_servers()) do
-      installed[name] = true
-      local cfg = servers[name] or {}
-      cfg.capabilities = capabilities
-      cfg.on_attach = on_attach
-      if lspconfig[name] then
-        lspconfig[name].setup(cfg)
+      if name ~= "stylua"then  -- Skip stylua
+        installed[name] = true
+        local cfg = servers[name] or {}
+        cfg.capabilities = capabilities
+        cfg.on_attach = on_attach
+        if lspconfig[name] then
+          lspconfig[name].setup(cfg)
+        end
       end
     end
   end
   -- Also setup any servers not installed via Mason (e.g. ruby_lsp from Bundler)
   for name, cfg in pairs(servers) do
-    if not installed[name] and lspconfig[name] then
+    if not installed[name] and lspconfig[name] and name ~= "stylua" then
       cfg.capabilities = capabilities
       cfg.on_attach = on_attach
       lspconfig[name].setup(cfg)
     end
   end
 end
-
 -- =========================================================
 -- Extra: forcibly start ruby-lsp on Ruby buffers if needed
 -- (no-op if already attached; avoids Mason API calls)

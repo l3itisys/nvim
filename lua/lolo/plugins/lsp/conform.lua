@@ -6,7 +6,7 @@ end
 
 conform.setup({
   formatters_by_ft = {
-    lua = { "stylua" },
+    lua = { "stylua" }, -- Use lua_ls for formatting
     javascript = { "prettier" },
     typescript = { "prettier" },
     javascriptreact = { "prettier" },
@@ -21,8 +21,8 @@ conform.setup({
     rust = { "rustfmt" },
     go = { "gofmt" },
     python = { "black", "isort" },
-    ruby = { "rubocop", "standardrb" },
-    eruby = { "erb_format" }, -- << use our custom formatter below
+    ruby = { "rubocop" },
+    eruby = { "erb_format" },
   },
 
   format_on_save = function(bufnr)
@@ -35,10 +35,10 @@ conform.setup({
 
   formatters = {
     stylua = {
+      command = vim.fn.stdpath("data") .. "/mason/bin/stylua",
       prepend_args = { "--indent-type", "Spaces", "--indent-width", "2" },
     },
 
-    -- Run the gem via Bundler so it’s always found in the project
     erb_format = {
       command = "bundle",
       args = { "exec", "erb-format", "--stdin" },
